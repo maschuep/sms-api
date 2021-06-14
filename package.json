@@ -1,0 +1,23 @@
+{
+  "name": "sms-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maschuep/sms-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maschuep/sms-api/issues"
+  },
+  "homepage": "https://github.com/maschuep/sms-api#readme",
+  "dependencies": {
+    "@westh/serial-commander": "^1.1.1",
+    "express": "^4.17.1"
+  }
+}
