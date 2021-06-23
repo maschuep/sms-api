@@ -19,6 +19,9 @@ class SmsController {
         this._router.get('/send', (req, res) => {
             console.log('sending AT');
             this._serialCommander.write('AT', (str) => { console.log('sent AT'); res.status(200).send(str); });
+            this._serialCommander.on('readable', (data) => {
+                console.log('modem: ', this._serialCommander.read().toString());
+            });
         });
     }
     getPathAndRouter() {
