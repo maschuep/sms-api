@@ -1,9 +1,11 @@
 import express, { Router, Request, Response } from 'express';
 import { ControllerFactory } from '../interfaces/controller-factory.interface';
 import { ControllersObject } from '../interfaces/controllers-object.interface';
-import * as serial from '@westh/serial-commander';
+
 
 export class SmsController implements ControllerFactory {
+
+    private SerialCommander = require('@westh/serial-commander');
 
     _router: Router;
     _path: string;
@@ -12,9 +14,9 @@ export class SmsController implements ControllerFactory {
     constructor() {
         this._router = express.Router();
         this._path = '/sms';
-        this._serialCommander = new serial.SerialCommander({
+        this._serialCommander = new this.SerialCommander({
             port: '/dev/serial0',
-            baudrate: '115200',
+            baudrate: 115200,
             delimiter: '/n',
             disableLog: false,
             defaultDelay: 50,
@@ -26,8 +28,8 @@ export class SmsController implements ControllerFactory {
 
     sendSms() {
         this._router.get('/send', (req: Request, res: Response) => {
-            console.log('sending AT')
-            this._serialCommander.send('AT').then((str: string) => {console.log('sent AT');res.status(200).send(str)});
+            console.log('sending AT');
+            this._serialCommander.send('AT').then((str: string) => {console.log('sent AT'); res.status(200).send(str); });
         });
     }
 
