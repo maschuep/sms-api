@@ -34,6 +34,48 @@ class SmsController {
             console.log('err', err);
         } });
         this.sendSms();
+        this.sendGSMSms();
+    }
+    sendGSMSms() {
+        this._router.get('/gsm', (req, res) => {
+            const serialportgsm = require('serialport-gsm');
+            const modem = serialportgsm.Modem();
+            const options = {
+                baudRate: 115200,
+                dataBits: 8,
+                stopBits: 1,
+                parity: 'none',
+                rtscts: false,
+                xon: false,
+                xoff: false,
+                xany: false,
+                autoDeleteOnReceive: true,
+                enableConcatenation: true,
+                incomingCallIndication: true,
+                incomingSMSIndication: true,
+                pin: '',
+                customInitCommand: '',
+                logger: console
+            };
+            modem.on('open', (data) => {
+                modem.initializeModem((err) => {
+                    if (err) {
+                        console.log('error1?:', err);
+                    }
+                });
+            });
+            modem.open('serial0', options, (err) => {
+                if (err) {
+                    console.log('error2?:', err);
+                }
+            });
+            modem.sendSMS('0786447590', 'Hello there Manu!', true, (err) => {
+                if (err) {
+                    console.log('sent?:', err);
+                }
+            });
+            res.status(200).send('gsm works?');
+        });
     }
     sendSms() {
         this._router.get('/send', (req, res) => {

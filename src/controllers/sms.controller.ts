@@ -26,11 +26,53 @@ export class SmsController implements ControllerFactory {
             rtscts: false,
             xoff: false,
             xany: false
-        }, (err) => {if (err) { console.log('err', err); }});
+        }, (err) => { if (err) { console.log('err', err); } });
 
         this.sendSms();
+        this.sendGSMSms();
     }
 
+    sendGSMSms() {
+        this._router.get('/gsm', (req: Request, res: Response) => {
+            const serialportgsm = require('serialport-gsm');
+            const modem = serialportgsm.Modem();
+            const options = {
+                baudRate: 115200,
+                dataBits: 8,
+                stopBits: 1,
+                parity: 'none',
+                rtscts: false,
+                xon: false,
+                xoff: false,
+                xany: false,
+                autoDeleteOnReceive: true,
+                enableConcatenation: true,
+                incomingCallIndication: true,
+                incomingSMSIndication: true,
+                pin: '',
+                customInitCommand: '',
+                logger: console
+            };
+            modem.on('open', (data: any) => {
+                modem.initializeModem((err: any) => {
+                    if (err) {
+                        console.log('error1?:', err);
+                    }
+                });
+            });
+            modem.open('serial0', options, (err: any) => {
+                if (err) {
+                    console.log('error2?:', err);
+                }
+            });
+            modem.sendSMS('0786447590', 'Hello there Manu!', true, (err: any) => {
+                if (err) {
+                    console.log('sent?:', err);
+                }
+            });
+            res.status(200).send('gsm works?');
+        });
+    }
     sendSms() {
         this._router.get('/send', (req: Request, res: Response) => {
             console.log('sending AT');
@@ -49,10 +91,10 @@ export class SmsController implements ControllerFactory {
                 this._serialPort.drain((err) => console.log(err));
                 res.status(200).send('working?');
             });
-            this._serialPort.on('data', function(data) {
+            this._serialPort.on('data', function (data) {
                 console.log('Received data: ' + data);
             });
-            this._serialPort.open((err) => {if (err) { console.log('could not open port: ', err); }});
+            this._serialPort.open((err) => { if (err) { console.log('could not open port: ', err); } });
 
         });
     }
