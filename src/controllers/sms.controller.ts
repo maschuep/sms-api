@@ -17,6 +17,7 @@ export class SmsController implements ControllerFactory {
         this._router = express.Router();
         this._path = '/sms';
         this._serialPort = new SerialPort('/dev/serial0', {
+            autoOpen: false,
             baudRate: 115200,
             dataBits: 8,
             parity: 'none',
@@ -45,6 +46,7 @@ export class SmsController implements ControllerFactory {
                 this._serialPort.write('HohesC');
                 await this.sleep(this._delay);
                 this._serialPort.write('\x1A');
+                res.status(200).send('did it work?');
             });
             this._serialPort.on('data', function(data) {
                 console.log('Received data: ' + data);
@@ -52,6 +54,7 @@ export class SmsController implements ControllerFactory {
             this._serialPort.on('readable', (data) => {
                 console.log('Modem reads: ', this._serialPort.read()?.toString('utf-8'));
             });
+            this._serialPort.open((err) => {if (err) { console.log('could not open port: ', err); }});
 
         });
     }

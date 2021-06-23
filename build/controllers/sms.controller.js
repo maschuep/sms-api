@@ -21,6 +21,7 @@ class SmsController {
         this._router = express_1.default.Router();
         this._path = '/sms';
         this._serialPort = new serialport_1.default('/dev/serial0', {
+            autoOpen: false,
             baudRate: 115200,
             dataBits: 8,
             parity: 'none',
@@ -49,6 +50,7 @@ class SmsController {
                 this._serialPort.write('HohesC');
                 yield this.sleep(this._delay);
                 this._serialPort.write('\x1A');
+                res.status(200).send('did it work?');
             }));
             this._serialPort.on('data', function (data) {
                 console.log('Received data: ' + data);
@@ -57,6 +59,9 @@ class SmsController {
                 var _a;
                 console.log('Modem reads: ', (_a = this._serialPort.read()) === null || _a === void 0 ? void 0 : _a.toString('utf-8'));
             });
+            this._serialPort.open((err) => { if (err) {
+                console.log('could not open port: ', err);
+            } });
         });
     }
     sleep(ms) {
