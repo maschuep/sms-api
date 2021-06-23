@@ -51,7 +51,6 @@ export class SmsController implements ControllerFactory {
                 pin: '',
                 customInitCommand: '',
                 logger: console,
-                alert: false
             };
             modem.on('open', (data: any) => {
                 modem.initializeModem((err: any) => {
@@ -59,7 +58,7 @@ export class SmsController implements ControllerFactory {
                         console.log('error1?:', err);
                     }
                 });
-                modem.sendSMS('0786447590', 'Hello there Manu!', true, (err: any) => {
+                modem.sendSMS('0786447590', 'welche klasse?', false, (err: any) => {
                     if (err) {
                         console.log('sent?:', err);
                     }

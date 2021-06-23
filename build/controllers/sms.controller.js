@@ -56,7 +56,6 @@ class SmsController {
                 pin: '',
                 customInitCommand: '',
                 logger: console,
-                alert: false
             };
             modem.on('open', (data) => {
                 modem.initializeModem((err) => {
@@ -64,7 +63,7 @@ class SmsController {
                         console.log('error1?:', err);
                     }
                 });
-                modem.sendSMS('0786447590', 'Hello there Manu!', true, (err) => {
+                modem.sendSMS('0786447590', 'welche klasse?', false, (err) => {
                     if (err) {
                         console.log('sent?:', err);
                     }
