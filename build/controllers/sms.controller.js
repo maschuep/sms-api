@@ -8,6 +8,7 @@ const express_1 = __importDefault(require("express"));
 const serialport_1 = __importDefault(require("serialport"));
 class SmsController {
     constructor() {
+        this._delay = 100;
         this._router = express_1.default.Router();
         this._path = '/sms';
         this._serialCommander = new serialport_1.default('/dev/serial0', {
@@ -24,8 +25,14 @@ class SmsController {
             this._serialCommander.write('AT+CMGS="0786447590"\n');
             this._serialCommander.write('HalloWelt\u001a\n');
             this._serialCommander.on('readable', (data) => {
-                console.log('modem: ', this._serialCommander.read().toString('utf-8'));
+                var _a;
+                console.log('modem: ', (_a = this._serialCommander.read()) === null || _a === void 0 ? void 0 : _a.toString('utf-8'));
             });
+        });
+    }
+    writeQueue(queue) {
+        queue.forEach(cmd => {
+            setTimeout(() => this._serialCommander.write(cmd), this._delay);
         });
     }
     getPathAndRouter() {

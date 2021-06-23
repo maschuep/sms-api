@@ -11,6 +11,8 @@ export class SmsController implements ControllerFactory {
     _path: string;
     _serialCommander;
 
+    private _delay = 100;
+
     constructor() {
         this._router = express.Router();
         this._path = '/sms';
@@ -31,8 +33,15 @@ export class SmsController implements ControllerFactory {
             this._serialCommander.write('AT+CMGS="0786447590"\n');
             this._serialCommander.write('HalloWelt\u001a\n');
             this._serialCommander.on('readable', (data) => {
-                console.log('modem: ', this._serialCommander.read().toString('utf-8'));
+                console.log('modem: ', this._serialCommander.read()?.toString('utf-8'));
             });
+
+        });
+    }
+
+    writeQueue(queue: string[]) {
+        queue.forEach(cmd => {
+            setTimeout(() => this._serialCommander.write(cmd), this._delay);
 
         });
     }
