@@ -2,6 +2,7 @@ import express, { Router, Request, Response } from 'express';
 import { send } from 'process';
 import { ControllerFactory } from '../interfaces/controller-factory.interface';
 import { ControllersObject } from '../interfaces/controllers-object.interface';
+import { verifyToken } from '../middlewares/checkAuth';
 
 
 export class SmsController implements ControllerFactory {
@@ -36,21 +37,21 @@ export class SmsController implements ControllerFactory {
         this._modem.on('open', () => {
             this._modem.initializeModem((answ: any) => {
                 if (answ.status !== 'success') {
-                    console.log('error1?:', answ);
+                    console.log('init error:', answ);
                 }
             });
 
         });
         this._modem.open('/dev/serial0', this._options, (answ: any) => {
             if (answ.status !== 'success') {
-                console.log('starting up:', answ);
+                console.log('starting up error:', answ);
             }
         });
-        this.testGSMSms();
+        this.testSms();
         this.sendSms();
     }
 
-    testGSMSms() {
+    testSms() {
         this._router.get('/test', (req: Request, res: Response) => {
             this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, true, (answ: any) => {
                 if (answ.status === 'success') {
@@ -67,7 +68,7 @@ export class SmsController implements ControllerFactory {
     }
 
     sendSms() {
-        this._router.post('/send', (req: Request, res: Response) => {
+        this._router.post('/send', verifyToken, (req: Request, res: Response) => {
             this._modem.sendSMS(`${req.body.number}`, `${req.body.message}`, req.body.flash, (answ: any) => {
                if (answ.status === 'success') {
                 try {

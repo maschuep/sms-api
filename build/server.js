@@ -18,17 +18,29 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Server = void 0;
 const dotenv = __importStar(require("dotenv"));
 const sms_controller_1 = require("./controllers/sms.controller");
 const server_service_1 = require("./services/server.service");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 class Server {
     constructor() {
         dotenv.config();
+        const createToken = process.env.CREATE_TOKEN === 'true';
+        if (createToken) {
+            this.printToken();
+        }
         this._port = Number.parseInt(process.env.PORT, 10) || 3001;
         this._server = new server_service_1.ServerService([new sms_controller_1.SmsController()]);
         this._server.listen(this._port, () => console.log(`server listening at http://localhost:${this._port}`));
+    }
+    printToken() {
+        const secret = process.env.JWT_SECRET;
+        console.log(jsonwebtoken_1.default.sign({ date: new Date().toLocaleString() }, secret, { expiresIn: '200d' }));
     }
 }
 exports.Server = Server;
