@@ -8,7 +8,7 @@ const express_1 = __importDefault(require("express"));
 const serialport_1 = __importDefault(require("serialport"));
 class SmsController {
     constructor() {
-        this._delay = 100;
+        this._delay = 1000;
         this._router = express_1.default.Router();
         this._path = '/sms';
         this._serialCommander = new serialport_1.default('/dev/serial0', {

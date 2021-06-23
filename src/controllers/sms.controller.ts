@@ -11,7 +11,7 @@ export class SmsController implements ControllerFactory {
     _path: string;
     _serialCommander;
 
-    private _delay = 100;
+    private _delay = 1000;
 
     constructor() {
         this._router = express.Router();
