@@ -2,6 +2,7 @@ import express, { Router, Request, Response } from 'express';
 import { ControllerFactory } from '../interfaces/controller-factory.interface';
 import { ControllersObject } from '../interfaces/controllers-object.interface';
 import SerialPort from 'serialport';
+import { isString } from 'util';
 
 
 export class SmsController implements ControllerFactory {
@@ -30,7 +31,7 @@ export class SmsController implements ControllerFactory {
             this._serialCommander.write('AT+CMGS="0786447590"\n');
             this._serialCommander.write('HalloWelt\u001a');
             this._serialCommander.on('readable', (data) => {
-                console.log('modem: ', this._serialCommander.read());
+                console.log('modem: ', this.convertToString(this._serialCommander.read()));
             });
 
         });
@@ -38,6 +39,13 @@ export class SmsController implements ControllerFactory {
 
     getPathAndRouter(): ControllersObject {
         return { path: this._path, controller: this._router };
+    }
+
+    convertToString(data: string | Buffer): string {
+        if (typeof data === 'string') {
+            return data;
+        }
+       return data.toString('utf-8');
     }
 
 }
