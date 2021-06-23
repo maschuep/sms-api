@@ -64,7 +64,7 @@ class SmsController {
                     }
                 });
             });
-            modem.open('serial0', options, (err) => {
+            modem.open('/dev/serial0', options, (err) => {
                 if (err) {
                     console.log('error2?:', err);
                 }

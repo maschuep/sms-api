@@ -60,7 +60,7 @@ export class SmsController implements ControllerFactory {
                     }
                 });
             });
-            modem.open('serial0', options, (err: any) => {
+            modem.open('/dev/serial0', options, (err: any) => {
                 if (err) {
                     console.log('error2?:', err);
                 }
