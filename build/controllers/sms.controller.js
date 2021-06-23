@@ -27,28 +27,41 @@ class SmsController {
             customInitCommand: '',
             logger: console,
         };
+        this._modem.on('open', (data) => {
+            this._modem.initializeModem((err) => {
+                if (err) {
+                    console.log('error1?:', err);
+                }
+            });
+        });
+        this._modem.open('/dev/serial0', this._options, (err) => {
+            if (err) {
+                console.log('error2?:', err);
+            }
+        });
         this.testGSMSms();
+        this.sendSms();
     }
     testGSMSms() {
         this._router.get('/gsm', (req, res) => {
-            this._modem.on('open', (data) => {
-                this._modem.initializeModem((err) => {
-                    if (err) {
-                        console.log('error1?:', err);
-                    }
-                });
-                this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, false, (err) => {
-                    if (err) {
-                        console.log('sent?:', err);
-                    }
-                });
-            });
-            this._modem.open('/dev/serial0', this._options, (err) => {
+            this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, false, (err) => {
                 if (err) {
-                    console.log('error2?:', err);
+                    console.log('sent sms:', err);
                 }
             });
-            res.status(200).send('gsm works');
+            res.status(200);
+        });
+    }
+    sendSms() {
+        this._router.post('/send', (req, res) => {
+            this._modem.sendSMS(`${req.body.number}`, `${req.body.message}`, false, (answ) => {
+                if (answ.status === 'success') {
+                    res.status(200).send();
+                }
+                else {
+                    res.status(500).send(answ);
+                }
+            });
         });
     }
     getPathAndRouter() {
