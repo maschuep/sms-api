@@ -22,7 +22,7 @@ class SmsController {
             this._serialCommander.write('AT+CMGF=1\n');
             this._serialCommander.write('AT+CSMP=17,167,0,144\n');
             this._serialCommander.write('AT+CMGS="0786447590"\n');
-            this._serialCommander.write('Hallo from API');
+            this._serialCommander.write('HalloWelt');
             setTimeout(() => {
                 this._serialCommander.write(Buffer.from([0x1a]));
                 this._serialCommander.write('\n');
