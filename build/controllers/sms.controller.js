@@ -25,7 +25,7 @@ class SmsController {
             this._serialCommander.write('Hallo from API');
             setTimeout(() => {
                 this._serialCommander.write(Buffer.from([0x1a]));
-                this._serialCommander.write('\r');
+                this._serialCommander.write('\n');
             }, 100);
             this._serialCommander.on('readable', (data) => {
                 console.log('modem: ', this._serialCommander.read().toString());
