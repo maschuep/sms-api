@@ -11,7 +11,7 @@ export class SmsController implements ControllerFactory {
     _path: string;
     _serialPort;
 
-    private _delay = 100;
+    private _delay = 1000;
 
     constructor() {
         this._router = express.Router();
@@ -46,7 +46,8 @@ export class SmsController implements ControllerFactory {
                 this._serialPort.write('HohesC');
                 await this.sleep(this._delay);
                 this._serialPort.write('\x1A');
-                res.status(200).send('did it work?');
+                this._serialPort.drain((err) => console.log(err));
+                res.status(200).send('working?');
             });
             this._serialPort.on('data', function(data) {
                 console.log('Received data: ' + data);

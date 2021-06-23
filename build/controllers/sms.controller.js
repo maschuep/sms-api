@@ -17,7 +17,7 @@ const express_1 = __importDefault(require("express"));
 const serialport_1 = __importDefault(require("serialport"));
 class SmsController {
     constructor() {
-        this._delay = 100;
+        this._delay = 1000;
         this._router = express_1.default.Router();
         this._path = '/sms';
         this._serialPort = new serialport_1.default('/dev/serial0', {
@@ -50,7 +50,8 @@ class SmsController {
                 this._serialPort.write('HohesC');
                 yield this.sleep(this._delay);
                 this._serialPort.write('\x1A');
-                res.status(200).send('did it work?');
+                this._serialPort.drain((err) => console.log(err));
+                res.status(200).send('working?');
             }));
             this._serialPort.on('data', function (data) {
                 console.log('Received data: ' + data);
