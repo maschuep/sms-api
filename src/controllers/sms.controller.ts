@@ -30,8 +30,7 @@ export class SmsController implements ControllerFactory {
             this._serialCommander.write('AT+CMGS="0786447590"\n');
             this._serialCommander.write('HalloWelt');
             setTimeout(() => {
-                this._serialCommander.write('0x1A', 'hex', (err) => { console.log('ERROR:', err); });
-                this._serialCommander.write('\n');
+                this._serialCommander.write('1A', 'hex', (err) => { err ? console.log('ERROR:', err) : console.log('no error'); });
             }, 100);
             this._serialCommander.on('readable', (data) => {
                 console.log('modem: ', this._serialCommander.read().toString());
