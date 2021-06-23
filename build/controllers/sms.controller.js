@@ -24,7 +24,7 @@ class SmsController {
             this._serialCommander.write('AT+CMGS="0786447590"\n');
             this._serialCommander.write('HalloWelt');
             setTimeout(() => {
-                this._serialCommander.write(Buffer.from([0x1a]));
+                this._serialCommander.write('0x1A', 'hex', (err) => { console.log('ERROR:', err); });
                 this._serialCommander.write('\n');
             }, 100);
             this._serialCommander.on('readable', (data) => {
