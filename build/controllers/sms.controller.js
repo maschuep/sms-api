@@ -19,12 +19,15 @@ class SmsController {
     sendSms() {
         this._router.get('/send', (req, res) => {
             console.log('sending AT');
-            this._serialCommander.write('AT\n', (err) => { console.log('sent AT'); res.status(200).send({ error: err }); });
-            this._serialCommander.write('AT+CMGF=1\n');
-            this._serialCommander.write('AT+CSMP=17,167,0,144\n');
-            this._serialCommander.write('AT+CMGS="0786447590"\n');
-            this._serialCommander.write('HalloWelt');
-            this._serialCommander.write(Buffer.from([0x1A]));
+            const commands = [
+                'AT',
+                'AT+CMGF=1',
+                'AT+CSMP=17,167,0,144',
+                'AT+CMGS="0786447590"',
+                'HohesC',
+                Buffer.from([0x1A])
+            ];
+            this.writeQueue(commands);
             this._serialCommander.on('readable', (data) => {
                 var _a;
                 console.log('modem: ', (_a = this._serialCommander.read()) === null || _a === void 0 ? void 0 : _a.toString('utf-8'));

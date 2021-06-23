@@ -27,12 +27,15 @@ export class SmsController implements ControllerFactory {
     sendSms() {
         this._router.get('/send', (req: Request, res: Response) => {
             console.log('sending AT');
-            this._serialCommander.write('AT\n', (err: Error) => { console.log('sent AT'); res.status(200).send({ error: err }); });
-            this._serialCommander.write('AT+CMGF=1\n');
-            this._serialCommander.write('AT+CSMP=17,167,0,144\n');
-            this._serialCommander.write('AT+CMGS="0786447590"\n');
-            this._serialCommander.write('HalloWelt');
-            this._serialCommander.write(Buffer.from([0x1A]));
+            const commands = [
+                'AT',
+                'AT+CMGF=1',
+                'AT+CSMP=17,167,0,144',
+                'AT+CMGS="0786447590"',
+                'HohesC',
+                Buffer.from([0x1A])
+            ];
+            this.writeQueue(commands);
             this._serialCommander.on('readable', (data) => {
                 console.log('modem: ', this._serialCommander.read()?.toString('utf-8'));
             });
@@ -40,7 +43,7 @@ export class SmsController implements ControllerFactory {
         });
     }
 
-    writeQueue(queue: string[]) {
+    writeQueue(queue: (string | Buffer)[]) {
         queue.forEach(cmd => {
             setTimeout(() => this._serialCommander.write(cmd), this._delay);
 
