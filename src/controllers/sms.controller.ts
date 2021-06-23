@@ -9,17 +9,23 @@ export class SmsController implements ControllerFactory {
 
     _router: Router;
     _path: string;
-    _serialCommander;
+    _serialPort;
 
-    private _delay = 1000;
+    private _delay = 100;
 
     constructor() {
         this._router = express.Router();
         this._path = '/sms';
-        this._serialCommander = new SerialPort('/dev/serial0', {
+        this._serialPort = new SerialPort('/dev/serial0', {
             baudRate: 115200,
-
-        });
+            dataBits: 8,
+            parity: 'none',
+            stopBits: 1,
+            xon: false,
+            rtscts: false,
+            xoff: false,
+            xany: false
+        }, (err) => {if (err) { console.log(err); }});
 
         this.sendSms();
     }
@@ -27,25 +33,36 @@ export class SmsController implements ControllerFactory {
     sendSms() {
         this._router.get('/send', (req: Request, res: Response) => {
             console.log('sending AT');
-            const commands = [
-                'AT',
-                'AT+CMGF=1',
-                'AT+CSMP=17,167,0,144',
-                'AT+CMGS="0786447590"',
-                'HohesC',
-                Buffer.from([0x1A])
-            ];
-            this.writeQueue(commands);
-            this._serialCommander.on('readable', (data) => {
-                console.log('modem: ', this._serialCommander.read()?.toString('utf-8'));
+            this._serialPort.on('open', async () => {
+                this._serialPort.write('AT\n');
+                await this.sleep(this._delay);
+                this._serialPort.write('AT+CMGF=1\n');
+                await this.sleep(this._delay);
+                this._serialPort.write('AT+CSMP=17,167,0,144\n');
+                await this.sleep(this._delay);
+                this._serialPort.write('AT+CMGS="0786447590"\n');
+                await this.sleep(this._delay);
+                this._serialPort.write('HohesC');
+                await this.sleep(this._delay);
+                this._serialPort.write('\x1A');
+            });
+            this._serialPort.on('data', function(data) {
+                console.log('Received data: ' + data);
+            });
+            this._serialPort.on('readable', (data) => {
+                console.log('Modem reads: ', this._serialPort.read()?.toString('utf-8'));
             });
 
         });
     }
 
-    writeQueue(queue: (string | Buffer)[]) {
+    sleep(ms: number): Promise<any> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    writeQueue(queue: string[]) {
         queue.forEach(cmd => {
-            setTimeout(() => this._serialCommander.write(cmd), this._delay);
+            setTimeout(() => this._serialPort.write(cmd), this._delay);
 
         });
     }

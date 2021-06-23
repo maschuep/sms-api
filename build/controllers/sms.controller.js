@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8,35 +17,54 @@ const express_1 = __importDefault(require("express"));
 const serialport_1 = __importDefault(require("serialport"));
 class SmsController {
     constructor() {
-        this._delay = 1000;
+        this._delay = 100;
         this._router = express_1.default.Router();
         this._path = '/sms';
-        this._serialCommander = new serialport_1.default('/dev/serial0', {
+        this._serialPort = new serialport_1.default('/dev/serial0', {
             baudRate: 115200,
-        });
+            dataBits: 8,
+            parity: 'none',
+            stopBits: 1,
+            xon: false,
+            rtscts: false,
+            xoff: false,
+            xany: false
+        }, (err) => { if (err) {
+            console.log(err);
+        } });
         this.sendSms();
     }
     sendSms() {
         this._router.get('/send', (req, res) => {
             console.log('sending AT');
-            const commands = [
-                'AT',
-                'AT+CMGF=1',
-                'AT+CSMP=17,167,0,144',
-                'AT+CMGS="0786447590"',
-                'HohesC',
-                Buffer.from([0x1A])
-            ];
-            this.writeQueue(commands);
-            this._serialCommander.on('readable', (data) => {
+            this._serialPort.on('open', () => __awaiter(this, void 0, void 0, function* () {
+                this._serialPort.write('AT\n');
+                yield this.sleep(this._delay);
+                this._serialPort.write('AT+CMGF=1\n');
+                yield this.sleep(this._delay);
+                this._serialPort.write('AT+CSMP=17,167,0,144\n');
+                yield this.sleep(this._delay);
+                this._serialPort.write('AT+CMGS="0786447590"\n');
+                yield this.sleep(this._delay);
+                this._serialPort.write('HohesC');
+                yield this.sleep(this._delay);
+                this._serialPort.write('\x1A');
+            }));
+            this._serialPort.on('data', function (data) {
+                console.log('Received data: ' + data);
+            });
+            this._serialPort.on('readable', (data) => {
                 var _a;
-                console.log('modem: ', (_a = this._serialCommander.read()) === null || _a === void 0 ? void 0 : _a.toString('utf-8'));
+                console.log('Modem reads: ', (_a = this._serialPort.read()) === null || _a === void 0 ? void 0 : _a.toString('utf-8'));
             });
         });
     }
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
     writeQueue(queue) {
         queue.forEach(cmd => {
-            setTimeout(() => this._serialCommander.write(cmd), this._delay);
+            setTimeout(() => this._serialPort.write(cmd), this._delay);
         });
     }
     getPathAndRouter() {
