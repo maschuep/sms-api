@@ -33,17 +33,17 @@ export class SmsController implements ControllerFactory {
             customInitCommand: '',
             logger: console,
         };
-        this._modem.on('open', (data: any) => {
-            this._modem.initializeModem((err: any) => {
-                if (err) {
-                    console.log('error1?:', err);
+        this._modem.on('open', () => {
+            this._modem.initializeModem((answ: any) => {
+                if (answ.status !== 'success') {
+                    console.log('error1?:', answ);
                 }
             });
 
         });
-        this._modem.open('/dev/serial0', this._options, (err: any) => {
-            if (err) {
-                console.log('error2?:', err);
+        this._modem.open('/dev/serial0', this._options, (answ: any) => {
+            if (answ.status !== 'success') {
+                console.log('starting up:', answ);
             }
         });
         this.testGSMSms();
@@ -52,11 +52,15 @@ export class SmsController implements ControllerFactory {
 
     testGSMSms() {
         this._router.get('/test', (req: Request, res: Response) => {
-            this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, false, (answ: any) => {
+            this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, true, (answ: any) => {
                 if (answ.status === 'success') {
-                    res.status(200).send();
+                    try {
+                        res.status(200).send();
+                    } catch (err) {
+                        console.log(err);
+                    }
                 } else {
-                    res.status(500).send(answ);
+                   console.log('Error: ', answ);
                 }
             });
         });
@@ -66,7 +70,11 @@ export class SmsController implements ControllerFactory {
         this._router.post('/send', (req: Request, res: Response) => {
             this._modem.sendSMS(`${req.body.number}`, `${req.body.message}`, req.body.flash, (answ: any) => {
                if (answ.status === 'success') {
-                   res.sendStatus(200);
+                try {
+                    res.status(200).send();
+                } catch (err) {
+                    console.log(err);
+                }
                } else {
                    console.log('Error: ', answ);
                }

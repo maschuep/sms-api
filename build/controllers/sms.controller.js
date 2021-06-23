@@ -27,16 +27,16 @@ class SmsController {
             customInitCommand: '',
             logger: console,
         };
-        this._modem.on('open', (data) => {
-            this._modem.initializeModem((err) => {
-                if (err) {
-                    console.log('error1?:', err);
+        this._modem.on('open', () => {
+            this._modem.initializeModem((answ) => {
+                if (answ.status !== 'success') {
+                    console.log('error1?:', answ);
                 }
             });
         });
-        this._modem.open('/dev/serial0', this._options, (err) => {
-            if (err) {
-                console.log('error2?:', err);
+        this._modem.open('/dev/serial0', this._options, (answ) => {
+            if (answ.status !== 'success') {
+                console.log('starting up:', answ);
             }
         });
         this.testGSMSms();
@@ -44,12 +44,17 @@ class SmsController {
     }
     testGSMSms() {
         this._router.get('/test', (req, res) => {
-            this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, false, (answ) => {
+            this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, true, (answ) => {
                 if (answ.status === 'success') {
-                    res.status(200).send();
+                    try {
+                        res.status(200).send();
+                    }
+                    catch (err) {
+                        console.log(err);
+                    }
                 }
                 else {
-                    res.status(500).send(answ);
+                    console.log('Error: ', answ);
                 }
             });
         });
@@ -58,7 +63,12 @@ class SmsController {
         this._router.post('/send', (req, res) => {
             this._modem.sendSMS(`${req.body.number}`, `${req.body.message}`, req.body.flash, (answ) => {
                 if (answ.status === 'success') {
-                    res.sendStatus(200);
+                    try {
+                        res.status(200).send();
+                    }
+                    catch (err) {
+                        console.log(err);
+                    }
                 }
                 else {
                     console.log('Error: ', answ);
