@@ -52,7 +52,6 @@ class SmsController {
                     res.status(500).send(answ);
                 }
             });
-            res.status(200).send();
         });
     }
     sendSms() {
@@ -62,7 +61,7 @@ class SmsController {
                     res.status(200).send();
                 }
                 else {
-                    res.status(500).send({ error: answ });
+                    res.status(500).send(`error: ${answ.status}`);
                 }
             });
         });
