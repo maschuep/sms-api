@@ -24,7 +24,7 @@ class SmsController {
             this._serialCommander.write('AT+CSMP=17,167,0,144\n');
             this._serialCommander.write('AT+CMGS="0786447590"\n');
             this._serialCommander.write('HalloWelt');
-            this._serialCommander.write(Buffer.from('0x1A'));
+            this._serialCommander.write(Buffer.from([0x1A]));
             this._serialCommander.on('readable', (data) => {
                 var _a;
                 console.log('modem: ', (_a = this._serialCommander.read()) === null || _a === void 0 ? void 0 : _a.toString('utf-8'));
