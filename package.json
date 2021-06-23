@@ -23,9 +23,9 @@
   "homepage": "https://github.com/maschuep/sms-api#readme",
   "dependencies": {
     "@westh/serial-commander": "^1.1.1",
-    "express": "^4.17.1",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
+    "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "sequelize": "^6.6.2",
