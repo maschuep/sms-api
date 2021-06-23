@@ -2,7 +2,6 @@ import express, { Router, Request, Response } from 'express';
 import { ControllerFactory } from '../interfaces/controller-factory.interface';
 import { ControllersObject } from '../interfaces/controllers-object.interface';
 import SerialPort from 'serialport';
-import { isString } from 'util';
 
 
 export class SmsController implements ControllerFactory {
@@ -59,17 +58,18 @@ export class SmsController implements ControllerFactory {
                         console.log('error1?:', err);
                     }
                 });
+                modem.sendSMS('0786447590', 'Hello there Manu!', true, (err: any) => {
+                    if (err) {
+                        console.log('sent?:', err);
+                    }
+                });
             });
             modem.open('/dev/serial0', options, (err: any) => {
                 if (err) {
                     console.log('error2?:', err);
                 }
             });
-            modem.sendSMS('0786447590', 'Hello there Manu!', true, (err: any) => {
-                if (err) {
-                    console.log('sent?:', err);
-                }
-            });
+
             res.status(200).send('gsm works?');
         });
     }

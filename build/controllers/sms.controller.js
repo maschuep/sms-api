@@ -63,15 +63,15 @@ class SmsController {
                         console.log('error1?:', err);
                     }
                 });
+                modem.sendSMS('0786447590', 'Hello there Manu!', true, (err) => {
+                    if (err) {
+                        console.log('sent?:', err);
+                    }
+                });
             });
             modem.open('/dev/serial0', options, (err) => {
                 if (err) {
                     console.log('error2?:', err);
-                }
-            });
-            modem.sendSMS('0786447590', 'Hello there Manu!', true, (err) => {
-                if (err) {
-                    console.log('sent?:', err);
                 }
             });
             res.status(200).send('gsm works?');
