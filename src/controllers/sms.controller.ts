@@ -51,24 +51,25 @@ export class SmsController implements ControllerFactory {
     }
 
     testGSMSms() {
-        this._router.get('/gsm', (req: Request, res: Response) => {
-            this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, false, (err: any) => {
-                if (err) {
-                    console.log('sent sms:', err);
+        this._router.get('/test', (req: Request, res: Response) => {
+            this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, false, (answ: any) => {
+                if (answ.status === 'success') {
+                    res.status(200).send();
+                } else {
+                    res.status(500).send(answ);
                 }
             });
-
-            res.status(200);
+            res.status(200).send();
         });
     }
 
     sendSms() {
         this._router.post('/send', (req: Request, res: Response) => {
-            this._modem.sendSMS(`${req.body.number}`, `${req.body.message}`, false, (answ: any) => {
+            this._modem.sendSMS(`${req.body.number}`, `${req.body.message}`, req.body.flash, (answ: any) => {
                if (answ.status === 'success') {
                    res.status(200).send();
                } else {
-                   res.status(500).send(answ);
+                   res.status(500).send({error: answ});
                }
             });
 

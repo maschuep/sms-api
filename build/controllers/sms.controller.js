@@ -43,23 +43,26 @@ class SmsController {
         this.sendSms();
     }
     testGSMSms() {
-        this._router.get('/gsm', (req, res) => {
-            this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, false, (err) => {
-                if (err) {
-                    console.log('sent sms:', err);
-                }
-            });
-            res.status(200);
-        });
-    }
-    sendSms() {
-        this._router.post('/send', (req, res) => {
-            this._modem.sendSMS(`${req.body.number}`, `${req.body.message}`, false, (answ) => {
+        this._router.get('/test', (req, res) => {
+            this._modem.sendSMS('0786447590', `funktioniert: ${new Date().toLocaleString()}`, false, (answ) => {
                 if (answ.status === 'success') {
                     res.status(200).send();
                 }
                 else {
                     res.status(500).send(answ);
+                }
+            });
+            res.status(200).send();
+        });
+    }
+    sendSms() {
+        this._router.post('/send', (req, res) => {
+            this._modem.sendSMS(`${req.body.number}`, `${req.body.message}`, req.body.flash, (answ) => {
+                if (answ.status === 'success') {
+                    res.status(200).send();
+                }
+                else {
+                    res.status(500).send({ error: answ });
                 }
             });
         });
