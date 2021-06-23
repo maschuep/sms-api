@@ -18,6 +18,9 @@ class ServerService {
         }
     }
     use(controllers) {
+        this._express.get('/', (req, res) => {
+            res.status(200).send('<h1>SMS API is working <span style="font-size:50px">&#127881;</span></h1>');
+        });
         controllers
             .map(c => c.getPathAndRouter())
             .forEach(r => this._express.use(r.path, r.controller));
