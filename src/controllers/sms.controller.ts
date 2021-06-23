@@ -50,7 +50,8 @@ export class SmsController implements ControllerFactory {
                 incomingSMSIndication: true,
                 pin: '',
                 customInitCommand: '',
-                logger: console
+                logger: console,
+                alert: false
             };
             modem.on('open', (data: any) => {
                 modem.initializeModem((err: any) => {

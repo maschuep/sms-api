@@ -55,7 +55,8 @@ class SmsController {
                 incomingSMSIndication: true,
                 pin: '',
                 customInitCommand: '',
-                logger: console
+                logger: console,
+                alert: false
             };
             modem.on('open', (data) => {
                 modem.initializeModem((err) => {
