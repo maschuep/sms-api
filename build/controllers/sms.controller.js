@@ -47,7 +47,7 @@ class SmsController {
                 yield this.sleep(this._delay);
                 this._serialPort.write('AT+CMGS="0786447590"\n');
                 yield this.sleep(this._delay);
-                this._serialPort.write('HohesC');
+                this._serialPort.write('HohesC\n    ');
                 yield this.sleep(this._delay);
                 this._serialPort.write('\x1A');
                 this._serialPort.drain((err) => console.log(err));
@@ -55,10 +55,6 @@ class SmsController {
             }));
             this._serialPort.on('data', function (data) {
                 console.log('Received data: ' + data);
-            });
-            this._serialPort.on('readable', (data) => {
-                var _a;
-                console.log('Modem reads: ', (_a = this._serialPort.read()) === null || _a === void 0 ? void 0 : _a.toString('utf-8'));
             });
             this._serialPort.open((err) => { if (err) {
                 console.log('could not open port: ', err);

@@ -43,7 +43,7 @@ export class SmsController implements ControllerFactory {
                 await this.sleep(this._delay);
                 this._serialPort.write('AT+CMGS="0786447590"\n');
                 await this.sleep(this._delay);
-                this._serialPort.write('HohesC');
+                this._serialPort.write('HohesC\n    ');
                 await this.sleep(this._delay);
                 this._serialPort.write('\x1A');
                 this._serialPort.drain((err) => console.log(err));
@@ -51,9 +51,6 @@ export class SmsController implements ControllerFactory {
             });
             this._serialPort.on('data', function(data) {
                 console.log('Received data: ' + data);
-            });
-            this._serialPort.on('readable', (data) => {
-                console.log('Modem reads: ', this._serialPort.read()?.toString('utf-8'));
             });
             this._serialPort.open((err) => {if (err) { console.log('could not open port: ', err); }});
 
