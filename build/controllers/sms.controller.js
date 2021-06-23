@@ -22,20 +22,14 @@ class SmsController {
             this._serialCommander.write('AT+CMGF=1\n');
             this._serialCommander.write('AT+CSMP=17,167,0,144\n');
             this._serialCommander.write('AT+CMGS="0786447590"\n');
-            this._serialCommander.write('HalloWelt\u001a');
+            this._serialCommander.write('HalloWelt\u001a\n');
             this._serialCommander.on('readable', (data) => {
-                console.log('modem: ', this.convertToString(this._serialCommander.read()));
+                console.log('modem: ', this._serialCommander.read().toString('utf-8'));
             });
         });
     }
     getPathAndRouter() {
         return { path: this._path, controller: this._router };
-    }
-    convertToString(data) {
-        if (typeof data === 'string') {
-            return data;
-        }
-        return data.toString('utf-8');
     }
 }
 exports.SmsController = SmsController;
