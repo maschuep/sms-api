@@ -58,10 +58,10 @@ class SmsController {
         this._router.post('/send', (req, res) => {
             this._modem.sendSMS(`${req.body.number}`, `${req.body.message}`, req.body.flash, (answ) => {
                 if (answ.status === 'success') {
-                    res.status(200).send();
+                    res.sendStatus(200);
                 }
                 else {
-                    res.status(500).send(`error: ${answ.status}`);
+                    console.log('Error: ', answ);
                 }
             });
         });
