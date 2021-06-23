@@ -24,7 +24,11 @@ export class SmsController implements ControllerFactory {
     sendSms() {
         this._router.get('/send', (req: Request, res: Response) => {
             console.log('sending AT');
-            this._serialCommander.write('AT', (str) => {console.log('sent AT'); res.status(200).send(str); });
+            this._serialCommander.write('AT', (str: Error) => {console.log('sent AT'); res.status(200).send(str); });
+            this._serialCommander.on('data', (data) => {
+                console.log('modem: ', data)
+              })
+              
         });
     }
 
