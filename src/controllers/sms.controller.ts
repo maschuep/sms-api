@@ -26,7 +26,7 @@ export class SmsController implements ControllerFactory {
             rtscts: false,
             xoff: false,
             xany: false
-        }, (err) => {if (err) { console.log(err); }});
+        }, (err) => {if (err) { console.log('err', err); }});
 
         this.sendSms();
     }
@@ -43,7 +43,7 @@ export class SmsController implements ControllerFactory {
                 await this.sleep(this._delay);
                 this._serialPort.write('AT+CMGS="0786447590"\n');
                 await this.sleep(this._delay);
-                this._serialPort.write('HohesC\n    ');
+                this._serialPort.write('HohesC\n');
                 await this.sleep(this._delay);
                 this._serialPort.write('\x1A');
                 this._serialPort.drain((err) => console.log(err));

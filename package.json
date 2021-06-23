@@ -29,6 +29,7 @@
     "morgan": "^1.10.0",
     "sequelize": "^6.6.2",
     "serialport": "^9.2.0",
+    "serialport-gsm": "^3.4.1",
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {

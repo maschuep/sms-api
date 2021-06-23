@@ -31,7 +31,7 @@ class SmsController {
             xoff: false,
             xany: false
         }, (err) => { if (err) {
-            console.log(err);
+            console.log('err', err);
         } });
         this.sendSms();
     }
@@ -47,7 +47,7 @@ class SmsController {
                 yield this.sleep(this._delay);
                 this._serialPort.write('AT+CMGS="0786447590"\n');
                 yield this.sleep(this._delay);
-                this._serialPort.write('HohesC\n    ');
+                this._serialPort.write('HohesC\n');
                 yield this.sleep(this._delay);
                 this._serialPort.write('\x1A');
                 this._serialPort.drain((err) => console.log(err));
