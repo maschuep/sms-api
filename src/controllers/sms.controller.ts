@@ -67,18 +67,26 @@ export class SmsController implements ControllerFactory {
         });
     }
 
+    /* core part of the sms api, this is the interface between the controller that listens on the path 'send' and the serial port, which controls the 4G HAT that sends
+     * the sms 
+     */
     sendSms() {
+        // listens on the url '{root}/send' verifies the request on this path is allowed 
         this._router.post('/send', verifyToken, (req: Request, res: Response) => {
+            //send sms to number in the request with messag from the request, the flash flag says wheter it should be a flash sms or not
             this._modem.sendSMS(`${req.body.number}`, `${req.body.message}`, req.body.flash, (answ: any) => {
+               // reply with statuscode 200
                if (answ.status === 'success') {
                 try {
                     res.status(200).send();
                 } catch (err) {
                     console.log(err);
                 }
+               // log a response
                } else {
                    console.log('Error: ', answ);
-               }
+               }   
+               res.status(500).send();
             });
 
         });
